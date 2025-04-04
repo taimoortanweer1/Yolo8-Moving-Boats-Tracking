@@ -3,24 +3,26 @@ import numpy as np
 import torch
 import torchvision
 from torchvision import models
-
 from deep_sort_realtime.deepsort_tracker import DeepSort  # DeepSORT tracking algorithm
 import os
+import time
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
-# Load a pre-trained object detection model (e.g., Faster R-CNN)
-#model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
-model = models.detection.fasterrcnn_resnet50_fpn(weights=models.detection.FasterRCNN_ResNet50_FPN_Weights.DEFAULT)
 
+# Check if CUDA is available
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(f'Using device: {device}')
+
+# Load a pre-trained object detection model (e.g., Faster R-CNN) and move it to GPU
+model = models.detection.fasterrcnn_resnet50_fpn(weights=models.detection.FasterRCNN_ResNet50_FPN_Weights.DEFAULT)
+model.to(device)  # Move model to GPU (if available)
 model.eval()
 
 # Initialize DeepSORT tracker
-tracker = DeepSort(max_age=3)  # Adjust max_age for tracking duration
+tracker = DeepSort(max_age=6)  # Adjust max_age for tracking duration
 
-# Open the grayscale video
-video_path = r'c:\\Users\\CSDI\\Desktop\\1.mp4'  # Update this with the correct video file path
-video_path = r'd:\\qt-workspace\\PythonProjects\\yolo\\Yolo8-Moving-Boats-Tracking\\3.mp4'  # Update this with the correct video file path
-video_path = r'd:\\qt-workspace\\PythonProjects\\yolo\\stbrdfire_5_oct_24.avi'  # Update this with the correct video file path
-video_path = r'd:\\Work\\python\\Yolo8-Moving-Boats-Tracking\\stbrdfire_5_oct_24.avi'  # Update this with the correct video file path
+# Open the video
+video_path = r'd:\\Work\\python\\Yolo8-Moving-Boats-Tracking\\1.mp4'  # Update this with the correct video file path
+video_path = r'd:\\Work\\python\\MTT\\scan0_01-06-22_10_31_05.avi'  # Update this with the correct video file path
 
 cap = cv2.VideoCapture(video_path)
 
@@ -31,6 +33,8 @@ fps = int(cap.get(cv2.CAP_PROP_FPS))
 
 # Process each frame
 frame_id = 0
+start_time = time.time()  # Start time to calculate FPS
+
 while cap.isOpened():
     ret, frame = cap.read()
     if not ret:
@@ -42,16 +46,16 @@ while cap.isOpened():
 
     # Preprocess the frame for the model
     transform = torchvision.transforms.Compose([torchvision.transforms.ToTensor()])
-    img_tensor = transform(frame).unsqueeze(0)
+    img_tensor = transform(frame).unsqueeze(0).to(device)  # Move image tensor to GPU
 
     # Perform object detection
     with torch.no_grad():
         predictions = model(img_tensor)
 
     # Extract detected objects (bounding boxes, labels, scores)
-    boxes = predictions[0]['boxes'].cpu().numpy()
-    scores = predictions[0]['scores'].cpu().numpy()
-    labels = predictions[0]['labels'].cpu().numpy()
+    boxes = predictions[0]['boxes'].cpu().numpy()  # Move to CPU after inference
+    scores = predictions[0]['scores'].cpu().numpy()  # Move to CPU after inference
+    labels = predictions[0]['labels'].cpu().numpy()  # Move to CPU after inference
 
     # Filter detections based on confidence threshold
     confidence_threshold = 0.5
@@ -80,6 +84,11 @@ while cap.isOpened():
         cv2.putText(frame, f"ID: {track_id}", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
     # Write the frame to the output video
+    # Calculate FPS (Optional)
+    if frame_id % 30 == 0:  # Update FPS every 30 frames for smoother results
+        elapsed_time = time.time() - start_time
+        fps_est = frame_id / elapsed_time
+        print(f"FPS: {fps_est:.2f}")
 
     # Display the frame (optional)
     cv2.imshow("Tracking", frame)

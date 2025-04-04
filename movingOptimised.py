@@ -19,7 +19,7 @@ model.eval()
 tracker = DeepSort(max_age=3)  # Adjust max_age for tracking duration
 
 # Video path
-video_path = r'c:\\Users\\CSDI\\Desktop\\stbrdfire_5_oct_24.avi'  # Update this with the correct video file path
+video_path = r'd:\\Work\\python\\Yolo8-Moving-Boats-Tracking\\stbrdfire_5_oct_24.avi'  # Update this with the correct video file path
 
 cap = cv2.VideoCapture(video_path)
 

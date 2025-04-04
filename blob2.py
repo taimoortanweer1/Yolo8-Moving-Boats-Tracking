@@ -1,7 +1,8 @@
 import cv2
 import torch
 import numpy as np
-
+import os
+import time
 # Initialize the YOLOv5 model from the Ultralytics repository
 model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)  # Load pre-trained YOLOv5 model
 
@@ -48,7 +49,8 @@ def track_objects(detections, tracked_objects):
 
 # Open the video file (grayscale video)
 video_path = r'c:\\Users\\CSDI\\Desktop\\3.mp4'  # Update this with the correct video file path
-video_path = r'c:\\Users\\CSDI\\Desktop\\stbrdfire_5_oct_24.avi'  # Update this with the correct video file path
+video_path = r'd:\\Work\\python\\Yolo8-Moving-Boats-Tracking\\stbrdfire_5_oct_24.avi'  # Update this with the correct video file path
+video_path = r'd:\\Work\\python\\MTT\\scan0_01-06-22_10_31_05.avi'  # Update this with the correct video file path
 
 cap = cv2.VideoCapture(video_path)
 
@@ -59,6 +61,9 @@ if not cap.isOpened():
 
 # Initialize an empty list for tracked objects
 tracked_objects = []
+
+frame_id = 0
+start_time = time.time()  # Start time to calculate FPS
 
 # Loop through each frame
 while(cap.isOpened()):
@@ -94,12 +99,19 @@ while(cap.isOpened()):
         cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)  # Green color box
         cv2.putText(frame, f"ID: {int(track_id)}", (int(x1), int(y1) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
+    # Calculate FPS (Optional)
+    if frame_id % 30 == 0:  # Update FPS every 30 frames for smoother results
+        elapsed_time = time.time() - start_time
+        fps_est = frame_id / elapsed_time
+        print(f"FPS: {fps_est:.2f}")
+
     # Display the frame with tracked objects
     cv2.imshow('Object Tracking', frame)
     
     # Exit on pressing 'q'
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
+    frame_id += 1
 
 # Release the video capture object and close all OpenCV windows
 cap.release()
