@@ -21,6 +21,7 @@ video_path = r'c:\\Users\\CSDI\\Desktop\\1.mp4'  # Update this with the correct 
 video_path = r'd:\\qt-workspace\\PythonProjects\\yolo\\Yolo8-Moving-Boats-Tracking\\3.mp4'  # Update this with the correct video file path
 video_path = r'd:\\qt-workspace\\PythonProjects\\yolo\\stbrdfire_5_oct_24.avi'  # Update this with the correct video file path
 video_path = r'd:\\Work\\python\\Yolo8-Moving-Boats-Tracking\\stbrdfire_5_oct_24.avi'  # Update this with the correct video file path
+video_path = r'd:\\Work\\python\\Yolo8-Moving-Boats-Tracking\\1.mp4'  # Update this with the correct video file path
 
 cap = cv2.VideoCapture(video_path)
 

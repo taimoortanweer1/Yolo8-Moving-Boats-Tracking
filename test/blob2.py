@@ -49,8 +49,8 @@ def track_objects(detections, tracked_objects):
 
 # Open the video file (grayscale video)
 video_path = r'c:\\Users\\CSDI\\Desktop\\3.mp4'  # Update this with the correct video file path
-video_path = r'd:\\Work\\python\\Yolo8-Moving-Boats-Tracking\\stbrdfire_5_oct_24.avi'  # Update this with the correct video file path
 video_path = r'd:\\Work\\python\\MTT\\scan0_01-06-22_10_31_05.avi'  # Update this with the correct video file path
+video_path = r'd:\\Work\\python\\Yolo8-Moving-Boats-Tracking\\stbrdfire_5_oct_24.avi'  # Update this with the correct video file path
 
 cap = cv2.VideoCapture(video_path)
 
