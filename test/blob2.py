@@ -3,8 +3,14 @@ import torch
 import numpy as np
 import os
 import time
+from ultralytics import YOLO
+
 # Initialize the YOLOv5 model from the Ultralytics repository
 model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)  # Load pre-trained YOLOv5 model
+
+
+# Load a pre-trained YOLOv8 model
+model = YOLO("yolo12n.pt")
 
 # Function to calculate IOU between two bounding boxes
 def iou(box1, box2):
@@ -48,9 +54,9 @@ def track_objects(detections, tracked_objects):
     return new_tracked_objects
 
 # Open the video file (grayscale video)
-video_path = r'c:\\Users\\CSDI\\Desktop\\3.mp4'  # Update this with the correct video file path
 video_path = r'd:\\Work\\python\\MTT\\scan0_01-06-22_10_31_05.avi'  # Update this with the correct video file path
-video_path = r'd:\\Work\\python\\Yolo8-Moving-Boats-Tracking\\stbrdfire_5_oct_24.avi'  # Update this with the correct video file path
+vivideo_path = r'd:\\Work\\python\\Yolo8-Moving-Boats-Tracking\\stbrdfire_5_oct_24.avi'  # Update this with the correct video file path
+video_path = r'dataset\\Objects_1_Back_Black_Time_01_W_320.mp4'  # Update this with the correct video file path
 
 cap = cv2.VideoCapture(video_path)
 
